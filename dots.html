@@ -1,0 +1,41 @@
+<body>
+  <script src="https://d3js.org/d3.v3.min.js" charset="utf-8"></script>
+  <script>
+      var circleRadii = [40, 20, 10];
+
+      var svgContainer = d3.select("body").append("svg").attr("width", 800).attr("height", 800);
+
+      var circles = svgContainer.selectAll("circle")
+                            .data(circleRadii)
+                            .enter()
+                            .append("circle")    
+      var circleAttributes = circles
+         .attr("cx", 200)
+         .attr("cy", function (d, i) {
+            return 780-i*100;
+         })
+         .attr("r", function (d) { return d; })
+         .style("fill", function(d) {
+           var returnColor;
+           if (d === 40) { returnColor = "green";
+           } else if (d === 20) { returnColor = "purple";
+           } else if (d === 10) { returnColor = "red"; }
+           return returnColor;
+         });
+      generate(circles[0][0]);
+
+//Given circle generate some more circles
+      function generate(node) {
+        var roll = Math.random();
+        if (roll < .2) { return;
+        } for (i = 0; i < roll*node.attributes.r.value; i++) {
+          var newNode = svgContainer.append("circle")
+            .attr("cx", Number(node.attributes.cx.value) + Number(Math.random()-1)*40 + 5)
+            .attr("cy", Number(node.attributes.cy.value) - Number(Math.random()*45) - Number(node.attributes.r.value*3))
+            .attr("r", node.attributes.r.value/2);
+          generate(newNode[0][0]);
+        }
+      }
+
+  </script>
+</body>
