@@ -2,10 +2,6 @@
   <script src="https://d3js.org/d3.v3.min.js" charset="utf-8"></script>
   <script>
       var diameter = 500;
-      var tree = d3.layout.tree()
-       .size([360, diameter / 2 - 120])
-       .separation(function(a, b) { return (a.parent == b.parent ? 1 : 2) / a.depth; });
-
       var circleRadii = [40];
       var rootRadius = 40;
 
@@ -35,7 +31,7 @@
       function generate(node) {
         var roll = Math.random();
         var radius = node.attributes.r.value;
-        if (radius < 4) { return;
+        if (radius < 7) { return;
         } if (roll < .2) { 
           return;
         } 
@@ -43,20 +39,31 @@
         var numBranch = rollToBranch(roll,radius);
         console.log(numBranch);
         for (var i = 0; i <= numBranch; i++) {
+          var theta = Number(Math.random()*3-1.5);
+          var r = radius*1.6;
+
+          var red = Math.floor(Math.random()*90-r);
+          var g = Math.floor(Math.random()*255-Math.pow(r,2)/5);
+          var b = Math.floor(Math.random()*60-r);
+
           var newNode = svgContainer.append("circle")
-            .attr("cx", Number(node.attributes.cx.value) + Number(Math.random()-.5)*100*(radius/rootRadius)*numBranch)
-            .attr("cy", Number(node.attributes.cy.value) + Number((Math.random()-.2)*35) - Number(node.attributes.r.value)*2-10)
-            .attr("r", node.attributes.r.value/1.2)
-            .attr("opacity", node.attributes.opacity.value/1.1);
+            .attr('cx', Number(node.attributes.cx.value) + Number(r * Math.sin(theta)))
+            .attr('cy', Number(node.attributes.cy.value) - Number(r * Math.cos(theta)))   
+         //   .attr("cx", Number(node.attributes.cx.value) + Number(Math.random()-.5)*120*(radius/rootRadius)*numBranch)
+           // .attr("cy", Number(node.attributes.cy.value) + Number((Math.random()-.2)*35) - Number(node.attributes.r.value)*2-10)
+            .attr("r", Number(node.attributes.r.value)/(1.06+(i)*.25))
+       //     .attr("opacity", node.attributes.opacity.value/1.1)
+       //     .attr("opacity", .9)
+            .attr("fill", "rgb("+red+","+g+","+b+")");
             console.log("should recurse here");
           generate(newNode[0][0]);
         }
       }
 
       function rollToBranch(roll,r) {
-        if (roll < .3) { return 0;
-        } else if (roll < .9) { return 1;
-        } else if (roll < .96) { return 2;
+        if (roll < .2 && r < 25) { return 0;
+        } else if (roll < .97) { return 1;
+        } else if (roll < .99) { return 2;
         } else return 3;
       }
 
